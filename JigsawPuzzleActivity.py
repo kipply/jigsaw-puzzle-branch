@@ -18,11 +18,17 @@
 # own creations we would love to hear from you at info@WorldWideWorkshop.org !
 #
 
-# init gthreads before using abiword
-import gobject
-gobject.threads_init()
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('SugarExt', '1.0') 
 
-from sugar.activity.activity import Activity, ActivityToolbox, get_bundle_path
+# init gthreads before using abiword
+from gi.repository import Gtk, GObject
+GObject.threads_init()
+from sugar3.activity.activity import Activity, get_bundle_path
+from sugar3.graphics.toolbarbox import ToolbarBox, ToolbarButton
+from sugar3.activity.widgets import ActivityToolbarButton, StopButton
+
 from gettext import gettext as _
 import logging, os, sys
 import time
@@ -223,20 +229,30 @@ class GameTube (ExportedGObject):
 
 class JigsawPuzzleActivity(Activity, TubeHelper):
     def __init__(self, handle):
+
         Activity.__init__(self, handle)
         logger.debug('Starting Jigsaw Puzzle activity... %s' % str(get_bundle_path()))
         os.chdir(get_bundle_path())
 
         self.connect('destroy', self._destroy_cb)
-        
-        toolbox = ActivityToolbox(self)
-        self.set_toolbox(toolbox)
-        toolbox.show()
+        toolbar_box = ToolbarBox()
 
-    # Toolbar title size hack
-        title_widget = toolbox._activity_toolbar.title
-        title_widget.set_size_request(title_widget.get_layout().get_pixel_size()[0] + 30, -1)
-        
+        activity_button = ActivityToolbarButton(self)
+        toolbar_box.toolbar.insert(activity_button, 0)
+        activity_button.show()
+
+        separator = Gtk.SeparatorToolItem()
+        separator.props.draw = False
+        separator.set_expand(True)
+        toolbar_box.toolbar.insert(separator, -1)
+        separator.show()
+
+        stop_button = StopButton(self)
+        toolbar_box.toolbar.insert(stop_button, -1)
+        stop_button.show()
+        self.set_toolbar_box(toolbar_box)
+        toolbar_box.show()
+
         self.ui = JigsawPuzzleUI(self)
         self.set_canvas(self.ui)
 

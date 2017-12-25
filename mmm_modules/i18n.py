@@ -25,7 +25,10 @@ import os
 import gettext
 import locale
 
-import gtk, gobject
+import gi
+gi.require_version('Gtk', '3.0')
+
+from gi.repository import GObject, Gtk
 
 _ = lambda x: x
 
@@ -111,12 +114,13 @@ def list_available_translations (domain):
             pass
     return rv
 
-class LanguageComboBox (gtk.ComboBox):
+class LanguageComboBox (Gtk.ComboBox):
     def __init__ (self, domain):
-        liststore = gtk.ListStore(gobject.TYPE_STRING)
-        gtk.ComboBox.__init__(self, liststore)
+        liststore = Gtk.ListStore(GObject.TYPE_STRING)
+        Gtk.ComboBox.__init__(self)
+        self.set_model(liststore)
 
-        self.cell = gtk.CellRendererText()
+        self.cell = Gtk.CellRendererText()
         self.pack_start(self.cell, True)
         self.add_attribute(self.cell, 'text', 0)
 
@@ -124,6 +128,8 @@ class LanguageComboBox (gtk.ComboBox):
         for i,x in enumerate(self.translations):
             liststore.insert(i+1, (gettext.gettext(x.name), ))
         self.connect('changed', self.install)
+        self.set_valign(Gtk.Align.END)
+        self.set_halign(Gtk.Align.START)
 
     def modify_bg (self, state, color):
         setattr(self.cell, 'background-gdk',color)

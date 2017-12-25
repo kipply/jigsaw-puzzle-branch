@@ -16,11 +16,13 @@
 #
 # If you find this activity useful or end up using parts of it in one of your
 # own creations we would love to hear from you at info@WorldWideWorkshop.org !
-# 
+#
 
-import pygtk
-pygtk.require('2.0')
-import gtk, gobject, pango
+import gi
+gi.require_version('Gtk', '3.0')
+
+from gi.repository import GObject, Gtk, Gdk, Pango
+
 import os
 
 from mamamedia_modules import BorderFrame, BORDER_ALL_BUT_BOTTOM, BORDER_ALL_BUT_LEFT
@@ -48,41 +50,40 @@ COLOR_FRAME_THUMB = COLOR_FRAME_GAME
 COLOR_FRAME_CONTROLS = "#FFFF00"
 COLOR_BG_CONTROLS = "#66CC00"
 COLOR_FG_BUTTONS = (
-    (gtk.STATE_NORMAL,"#CCFF99"),
-    (gtk.STATE_ACTIVE,"#CCFF99"),
-    (gtk.STATE_PRELIGHT,"#CCFF99"),
-    (gtk.STATE_SELECTED,"#CCFF99"),
-    (gtk.STATE_INSENSITIVE,"#CCFF99"),
+    (Gtk.StateType.NORMAL,"#CCFF99"),
+    (Gtk.StateType.ACTIVE,"#CCFF99"),
+    (Gtk.StateType.PRELIGHT,"#CCFF99"),
+    (Gtk.StateType.SELECTED,"#CCFF99"),
+    (Gtk.StateType.INSENSITIVE,"#CCFF99"),
     )
 COLOR_BG_BUTTONS = (
-    (gtk.STATE_NORMAL,"#027F01"),
-    (gtk.STATE_ACTIVE,"#014D01"),
-    (gtk.STATE_PRELIGHT,"#016D01"),
-    (gtk.STATE_SELECTED,"#027F01"),
-    (gtk.STATE_INSENSITIVE,"#CCCCCC"),
+    (Gtk.StateType.NORMAL,"#027F01"),
+    (Gtk.StateType.ACTIVE,"#014D01"),
+    (Gtk.StateType.PRELIGHT,"#016D01"),
+    (Gtk.StateType.SELECTED,"#027F01"),
+    (Gtk.StateType.INSENSITIVE,"#CCCCCC"),
     )
 
 def prepare_btn(btn, w=-1, h=-1):
     for state, color in COLOR_BG_BUTTONS:
-        btn.modify_bg(state, gtk.gdk.color_parse(color))
+        btn.modify_bg(state, Gdk.color_parse(color))
     c = btn.get_child()
     if c is not None:
         for state, color in COLOR_FG_BUTTONS:
-            c.modify_fg(state, gtk.gdk.color_parse(color))
+            c.modify_fg(state, Gdk.color_parse(color))
     else:
         for state, color in COLOR_FG_BUTTONS:
-            btn.modify_fg(state, gtk.gdk.color_parse(color))
+            btn.modify_fg(state, Gdk.color_parse(color))
     if w>0 or h>0:
         btn.set_size_request(w, h)
     return btn
 
 
 class JigsawPuzzleUI (BorderFrame):
-    __gsignals__ = {'game-state-changed' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (int,))}
-    
+    __gsignals__ = {'game-state-changed' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (int,))}
+
     def __init__(self, parent):
         super(JigsawPuzzleUI, self).__init__(border_color=COLOR_FRAME_OUTER)
-
         self._shuffling = False
 
         self._parent = parent
@@ -95,7 +96,7 @@ class JigsawPuzzleUI (BorderFrame):
         self._readonly = False
         self._join_time = 0
 
-        inner_table = gtk.Table(2,2,False)
+        inner_table = Gtk.Table(2,2,False)
         self.add(inner_table)
 
         self.game = JigsawPuzzleWidget()
@@ -106,50 +107,50 @@ class JigsawPuzzleUI (BorderFrame):
         self.game.show()
 
         # panel is a holder for everything on the left side down to (not inclusive) the language dropdown
-        panel = gtk.VBox()
+        panel = Gtk.VBox()
 
         # Logo image
-        img_logo = gtk.Image()
+        img_logo = Gtk.Image()
         img_logo.set_from_file("icons/logo.png")
         img_logo.show()
-        panel.pack_start(img_logo, expand=False, fill=False)
+        panel.pack_start(img_logo, False, False, 0)
 
 
         # Control panel has the image controls
         control_panel = BorderFrame(border=BORDER_ALL_BUT_BOTTOM,
                                     border_color=COLOR_FRAME_CONTROLS,
                                     bg_color=COLOR_BG_CONTROLS)
-        control_panel_box = gtk.VBox()
+        control_panel_box = Gtk.VBox()
 
-        scrolled = gtk.ScrolledWindow()
-        scrolled.props.hscrollbar_policy = gtk.POLICY_NEVER
-        scrolled.props.vscrollbar_policy = gtk.POLICY_AUTOMATIC
+        scrolled = Gtk.ScrolledWindow()
+        scrolled.props.hscrollbar_policy = Gtk.PolicyType.NEVER
+        scrolled.props.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC
         scrolled.show()
         scrolled.add_with_viewport(control_panel_box)
-        scrolled.child.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(COLOR_BG_CONTROLS))
+        scrolled.get_child().modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(COLOR_BG_CONTROLS))
         control_panel.add(scrolled)
 
-        spacer = gtk.Label()
+        spacer = Gtk.Label()
         spacer.set_size_request(-1, 5)
-        control_panel_box.pack_start(spacer, expand=False, fill=False)
+        control_panel_box.pack_start(spacer, False, False, 0)
 
-        btn_box = gtk.Table(2,5,False)
+        btn_box = Gtk.Table(2,5,False)
         btn_box.set_col_spacings(5)
         btn_box.set_row_spacings(5)
-        btn_box.attach(gtk.Label(), 0,1,0,2)
+        btn_box.attach(Gtk.Label(), 0,1,0,2)
         # Cut type buttons
-        self.btn_basic_cut = gtk.ToggleButton()
-        i = gtk.Image()
+        self.btn_basic_cut = Gtk.ToggleButton()
+        i = Gtk.Image()
         i.set_from_pixbuf(utils.load_image(os.path.join('icons', 'cut_basic.svg')))
         self.btn_basic_cut.set_image(i)
         btn_box.attach(prepare_btn(self.btn_basic_cut), 1,2,0,1,0,0)
-        self.btn_simple_cut = gtk.ToggleButton()
-        i = gtk.Image()
+        self.btn_simple_cut = Gtk.ToggleButton()
+        i = Gtk.Image()
         i.set_from_pixbuf(utils.load_image(os.path.join('icons', 'cut_simple.svg')))
         self.btn_simple_cut.set_image(i)
         btn_box.attach(prepare_btn(self.btn_simple_cut), 2,3,0,1,0,0)
-        self.btn_classic_cut = gtk.ToggleButton()
-        i = gtk.Image()
+        self.btn_classic_cut = Gtk.ToggleButton()
+        i = Gtk.Image()
         i.set_from_pixbuf(utils.load_image(os.path.join('icons', 'cut_classic.svg')))
         self.btn_classic_cut.set_image(i)
         # Link cutter buttons with cutter styles
@@ -163,19 +164,19 @@ class JigsawPuzzleUI (BorderFrame):
 
         btn_box.attach(prepare_btn(self.btn_classic_cut), 3,4,0,1,0,0)
         # Difficulty level buttons
-        self.btn_easy_level = gtk.ToggleButton()
-        i = gtk.Image()
+        self.btn_easy_level = Gtk.ToggleButton()
+        i = Gtk.Image()
         i.set_from_pixbuf(utils.load_image(os.path.join('icons', 'level_easy.svg')))
         self.btn_easy_level.set_active(True)
         self.btn_easy_level.set_image(i)
         btn_box.attach(prepare_btn(self.btn_easy_level), 1,2,1,2,0,0)
-        self.btn_normal_level = gtk.ToggleButton()
-        i = gtk.Image()
+        self.btn_normal_level = Gtk.ToggleButton()
+        i = Gtk.Image()
         i.set_from_pixbuf(utils.load_image(os.path.join('icons', 'level_normal.svg')))
         self.btn_normal_level.set_image(i)
         btn_box.attach(prepare_btn(self.btn_normal_level), 2,3,1,2,0,0)
-        self.btn_hard_level = gtk.ToggleButton()
-        i = gtk.Image()
+        self.btn_hard_level = Gtk.ToggleButton()
+        i = Gtk.Image()
         i.set_from_pixbuf(utils.load_image(os.path.join('icons', 'level_hard.svg')))
         self.btn_hard_level.set_image(i)
         # Link level buttons with levels
@@ -188,9 +189,10 @@ class JigsawPuzzleUI (BorderFrame):
             v.connect("released", self.set_level, k)
 
         btn_box.attach(prepare_btn(self.btn_hard_level), 3,4,1,2,0,0)
-        
-        btn_box.attach(gtk.Label(), 4,5,0,2)
-        control_panel_box.pack_start(btn_box, expand=False)
+
+        btn_box.attach(Gtk.Label(), 4,5,0,2)
+        control_panel_box.pack_start(btn_box, False, True, 0)
+
 
         self.thumb = ImageSelectorWidget(frame_color=COLOR_FRAME_THUMB,
                                          prepare_btn_cb=prepare_btn,
@@ -199,49 +201,49 @@ class JigsawPuzzleUI (BorderFrame):
                                          parent=self._parent)
         self.thumb.connect("category_press", self.do_select_category)
         self.thumb.connect("image_press", self.do_shuffle)
-        control_panel_box.pack_start(self.thumb, expand=False)
+        control_panel_box.pack_start(self.thumb, False, True, 0)
 
-        spacer = gtk.Label()
+        spacer = Gtk.Label()
         spacer.set_size_request(-1, 5)
-        control_panel_box.pack_start(spacer, expand=False, fill=False)
-        
+        control_panel_box.pack_start(spacer, False, False, 0)
+
         # The game control buttons
-        btn_box = gtk.Table(3,4,False)
+        btn_box = Gtk.Table(3,4,False)
         btn_box.set_row_spacings(2)
-        btn_box.attach(gtk.Label(), 0,1,0,4)
-        btn_box.attach(gtk.Label(), 2,3,0,4)
-        self.btn_solve = prepare_btn(gtk.Button(" "), 200)
+        btn_box.attach(Gtk.Label(), 0,1,0,4)
+        btn_box.attach(Gtk.Label(), 2,3,0,4)
+        self.btn_solve = prepare_btn(Gtk.Button(" "), 200)
         self.labels_to_translate.append([self.btn_solve, _("Solve")])
         self.btn_solve.connect("clicked", self.do_solve)
         btn_box.attach(self.btn_solve, 1,2,0,1,0,0)
-        self.btn_shuffle = prepare_btn(gtk.Button(" "), 200)
+        self.btn_shuffle = prepare_btn(Gtk.Button(" "), 200)
         self.labels_to_translate.append([self.btn_shuffle, _("Shuffle")])
         self.btn_shuffle.connect("clicked", self.do_shuffle)
         btn_box.attach(self.btn_shuffle, 1,2,1,2,0,0)
-        self.btn_add = prepare_btn(gtk.Button(" "), 200)
+        self.btn_add = prepare_btn(Gtk.Button(" "), 200)
         self.labels_to_translate.append([self.btn_add, _("My Picture")])
         self.btn_add.connect("clicked", self.do_add_image)
         btn_box.attach(self.btn_add, 1,2,2,3,0,0)
-        self.btn_hint = prepare_btn(gtk.ToggleButton(" "), 200)
+        self.btn_hint = prepare_btn(Gtk.ToggleButton(" "), 200)
         self.labels_to_translate.append([self.btn_hint, _("Board Hint")])
         self.btn_hint.connect("clicked", self.do_show_hint)
         btn_box.attach(self.btn_hint, 1,2,3,4,0,0)
-        control_panel_box.pack_start(btn_box, False)
+        control_panel_box.pack_start(btn_box, False, True, 0)
         self.control_panel_box = control_panel_box
 
         # Control panel end
-        panel.pack_start(control_panel, expand=True, fill=True)
+        panel.pack_start(control_panel, True, True, 0)
 
         inner_table.attach(panel, 0,1,0,1,0)
 
         self.game_box = BorderFrame(border_color=COLOR_FRAME_GAME)
         self.game_box.add(self.game)
 
-        self.notebook = gtk.Notebook()
+        self.notebook = Gtk.Notebook()
         self.notebook.show()
         self.notebook.props.show_border = False
         self.notebook.props.show_tabs = False
-        self.notebook.append_page(self.game_box)
+        self.notebook.append_page(self.game_box, None)
         inner_table.attach(self.notebook, 1,2,0,1)
 
         lang_combo = prepare_btn(LanguageComboBox('org.worldwideworkshop.olpc.JigsawPuzzle'))
@@ -251,36 +253,36 @@ class JigsawPuzzleUI (BorderFrame):
         lang_combo.install()
         lang_box = BorderFrame(bg_color=COLOR_BG_CONTROLS,
                                border_color=COLOR_FRAME_CONTROLS)
-        hbox = gtk.HBox(False)
-        vbox = gtk.VBox(False)
-        vbox.pack_start(lang_combo, padding=8)
-        hbox.pack_start(vbox, padding=8)
+        hbox = Gtk.HBox(False)
+        vbox = Gtk.VBox(False)
+        vbox.pack_start(lang_combo, True, True, 8)
+        hbox.pack_start(vbox, True, True, 8)
         lang_box.add(hbox)
-        inner_table.attach(lang_box, 0,1,1,2,gtk.FILL, gtk.FILL)
+        inner_table.attach(lang_box, 0,1,1,2,Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
 
         timer_box = BorderFrame(border=BORDER_ALL_BUT_LEFT,
                                 bg_color=COLOR_BG_CONTROLS,
                                 border_color=COLOR_FRAME_CONTROLS)
-        timer_hbox = gtk.HBox(False)
+        timer_hbox = Gtk.HBox(False)
         self.timer = TimerWidget(bg_color=COLOR_BG_BUTTONS[0][1],
                                  fg_color=COLOR_FG_BUTTONS[0][1],
                                  lbl_color=COLOR_BG_BUTTONS[1][1])
         self.timer.set_sensitive(False)
         self.timer.set_border_width(3)
         self.labels_to_translate.append((self.timer, _("Time: ")))
-        timer_hbox.pack_start(self.timer, False, padding=8)
+        timer_hbox.pack_start(self.timer, False, True, 8)
         self.timer.connect('timer_toggle', self.timer_toggle_cb)
 
-        self.msg_label = gtk.Label()
+        self.msg_label = Gtk.Label()
         self.msg_label.show()
-        timer_hbox.pack_start(self.msg_label, True)
-        
+        timer_hbox.pack_start(self.msg_label, True, True, 0)
+
         self.do_select_language(lang_combo)
-        
+
         self.buddy_panel = BuddyPanel(BUDDYMODE_COLLABORATION)
         self.buddy_panel.show()
 
-        if not parent._shared_activity:
+        if not parent.get_shared():
             self.do_select_category(self)
 
         self.set_contest_mode(False)
@@ -360,9 +362,9 @@ class JigsawPuzzleUI (BorderFrame):
                         self._send_game_update()
             self._send_status_update()
         elif state[0] <= GAME_STARTED[0] and self._contest_mode and not self.is_initiator():
-            c = gtk.gdk.Cursor(gtk.gdk.WATCH)
+            c = Gtk.gdk.Cursor(Gtk.gdk.WATCH)
             self.window.set_cursor(c)
-            
+
 
     def get_game_state (self):
         return self._state
@@ -387,15 +389,14 @@ class JigsawPuzzleUI (BorderFrame):
     def _show_game (self, pixbuf=None, reshuffle=True):
         if not self.game.get_parent():
             self.game_box.pop()
-            while gtk.events_pending():
-                gtk.main_iteration(False)
-        c = gtk.gdk.Cursor(gtk.gdk.WATCH)
-        self.window.set_cursor(c)
+            while Gtk.events_pending():
+                Gtk.main_iteration()
+        self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.WATCH))
         if not self.game.prepare_image(pixbuf, reshuffle):
             self._shuffling = False
             return
         self._shuffling = False
-        self.window.set_cursor(None)
+        self.get_window().set_cursor(None)
         #self.game.randomize()
 
     def do_shuffle (self, o, *args):
@@ -417,7 +418,7 @@ class JigsawPuzzleUI (BorderFrame):
                 self._show_game(self.thumb.get_image())
                 self.timer.reset(False)
                 self.do_show_hint(self.btn_hint)
-        
+
     def do_solve (self, o, *args):
         if not self.game.is_running():
             return
@@ -429,14 +430,14 @@ class JigsawPuzzleUI (BorderFrame):
             self.set_game_state(GAME_FINISHED)
             self.set_message(_("Puzzle Solved!"))
             self.control_panel_box.foreach(self.control_panel_box.remove)
-            lbl = gtk.Label(_("Press Stop on the Toolbar to Exit Activity!"))
+            lbl = Gtk.Label(_("Press Stop on the Toolbar to Exit Activity!"))
             lbl.modify_font(pango.FontDescription("bold 9"))
             lbl.set_line_wrap(True)
-            lbl.set_justify(gtk.JUSTIFY_CENTER)
+            lbl.set_justify(Gtk.JUSTIFY_CENTER)
             lbl.set_size_request(200, -1)
             lbl.show()
-            self.control_panel_box.pack_start(lbl, True)
-            
+            self.control_panel_box.pack_start(lbl, True, True, 8)
+
 
     def do_add_image (self, o, *args):
         if self._contest_mode and self.get_game_state() >= GAME_STARTED:
@@ -466,7 +467,7 @@ class JigsawPuzzleUI (BorderFrame):
     def refresh_labels (self, first_time=False):
         self._parent.set_title(_("Jigsaw Puzzle Activity"))
         for lbl in self.labels_to_translate:
-            if isinstance(lbl[0], gtk.Button):
+            if isinstance(lbl[0], Gtk.Button):
                 lbl[0].get_child().set_label(_(lbl[1]))
             else:
                 lbl[0].set_label(_(lbl[1]))
@@ -510,7 +511,7 @@ class JigsawPuzzleUI (BorderFrame):
             self._send_pick_notification (piece)
 
     def piece_drop_cb (self, o, piece, from_mesh=False):
-        if self._parent._shared_activity and not from_mesh:
+        if self._parent.get_shared() and not from_mesh:
             self._send_drop_notification (piece)
 
     def _freeze (self, journal=True):
@@ -539,7 +540,7 @@ class JigsawPuzzleUI (BorderFrame):
     @utils.trace
     def _send_status_update (self):
         """ Send a status update signal """
-        if self._parent._shared_activity:
+        if self._parent.get_shared():
             if self.get_game_state() == GAME_STARTED:
                 if self.thumb.has_image():
                     self.set_message(_("Game Started!"))
@@ -550,14 +551,14 @@ class JigsawPuzzleUI (BorderFrame):
     @utils.trace
     def _send_game_update (self):
         """ A puzzle was selected, share it """
-        if self._parent._shared_activity:
-            # TODO: Send image 
+        if self._parent.get_shared():
+            # TODO: Send image
             self._parent.game_tube.GameUpdate(self._state[1])
 
     @utils.trace
     def _send_pick_notification (self, piece):
         """ """
-        if self._parent._shared_activity:
+        if self._parent.get_shared():
             self._parent.game_tube.PiecePicked(piece.get_index())
 
     @utils.trace
@@ -566,7 +567,7 @@ class JigsawPuzzleUI (BorderFrame):
             if piece.get_index() == index:
                 logging.debug("Remote picked piece %s" % piece)
                 piece.set_sensitive(False)
-                
+
     @utils.trace
     def _send_drop_notification (self, piece):
         """ """
@@ -574,7 +575,7 @@ class JigsawPuzzleUI (BorderFrame):
             self._parent.game_tube.PiecePlaced(piece.get_index())
         else:
             self._parent.game_tube.PieceDropped(piece.get_index(), piece.get_position())
-    
+
     @utils.trace
     def _recv_drop_notification (self, index, position=None):
         for piece in self.game.get_floating_pieces():
