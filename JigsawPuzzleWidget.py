@@ -59,8 +59,6 @@ class JigsawPiece (Gtk.EventBox):
         self.placed = False
         self._prepare_ui()
         self._prepare_event_callbacks()
-        self.x = x
-        self.y = y
 
     def _prepare_ui (self):
         self._c = Gtk.Fixed()
@@ -141,18 +139,10 @@ class JigsawPiece (Gtk.EventBox):
 
     def _expose_cb (self, *args):
         if self.shape is not None:
+            logger.error(self.shape)
             # Won't work as cairo.Region is not available in Python 2
-            self.get_window().ensure_native()
-
-            logging.error("X" + str(self.x))
-            logging.error("Y " + str(self.y))
-            logging.error("H" + str(self.shape.get_height()))
-            logging.error("W " + str(self.shape.get_width()))
-            self.get_window().resize(self.get_window().get_height() + self.x, self.get_window().get_width() + self.y)
-            # self.get_window().resize(self.get_window().get_height() + 150, self.get_window().get_width() + 150)
-            self.get_window().scroll(100, 100)
-            # self.get_window().resize(100, 100)
-            # self.get_window().resize(self.shape.get_height(), self.shape.get_width())
+            mregion = Gdk.cairo_region_create_from_surface(self.shape)
+            self.get_window().shape_combine_region(mregion, 0, 0)
 
 class CutterBasic (object):
     """ Cutters are used to create the connectors between pieces.
@@ -538,8 +528,8 @@ class JigsawBoard (BorderFrame):
         for col in range(pcw):
             pos_y = 0
             for row in range(pch):
+                piece = JigsawPiece(self.cutboard.pieces[col][row][-2], self.cutboard.pieces[col][row][-1])
                 pb, pb_wf, mask, px, py, pw, ph = self.cutboard.pieces[col][row]
-                piece = JigsawPiece(pw, ph)
                 piece.set_from_pixbuf(pb, pb_wf, mask)
                 piece.show()
                 piece.set_index(len(self.board_distribution))
