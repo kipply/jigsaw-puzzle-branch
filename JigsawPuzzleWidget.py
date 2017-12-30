@@ -31,6 +31,9 @@ import md5
 from cStringIO import StringIO
 from mmm_modules import BorderFrame, utils
 
+
+import pygtk
+
 MAGNET_POWER_PERCENT = 20
 CUTTERS = {}
 
@@ -142,7 +145,12 @@ class JigsawPiece (Gtk.EventBox):
             # Won't work as cairo.Region is not available in Python 2
             self.get_window().ensure_native()
             logging.error(self.get_window().is_shaped())
-            self.get_window().resize(self.shape.get_width(), self.shape.get_width())
+            # try:
+            #     mregion = Gdk.cairo_region_create_from_surface(self.shape)
+            #     self.get_window().shape_combine_region(mregion, 0, 0)
+            #     logging.error(self.get_window().is_shaped())
+            # except:
+            #     self.get_window().resize(100, 100)
 
 
 class CutterBasic (object):
@@ -373,6 +381,7 @@ class CutBoard (object):
         height = int(height)
         # Prepare the piece mask
         mask_surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width+width_offset, height+height_offset)
+        self.get_window().resize(height, width)
         #gtk.gdk.Pixmap(None, width+width_offset, height+height_offset, 1)
         mask_cr = cairo.Context(mask_surface)
         mask_cr.save()
