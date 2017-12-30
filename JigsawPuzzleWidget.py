@@ -142,7 +142,8 @@ class JigsawPiece (Gtk.EventBox):
             # Won't work as cairo.Region is not available in Python 2
             self.get_window().ensure_native()
 
-            logging.error(self.shape.get_device_offset())
+            logging.error(self.x)
+            logging.error(self.f)
             logging.error(self.shape.get_height())
             logging.error(self.shape.get_width())
             # self.get_window().move_resize(100, 100, 100, 100)
@@ -531,7 +532,7 @@ class JigsawBoard (BorderFrame):
         for col in range(pcw):
             pos_y = 0
             for row in range(pch):
-                piece = JigsawPiece()
+                piece = JigsawPiece(self.cutboard.pieces[col][row][5:])
                 pb, pb_wf, mask, px, py, pw, ph = self.cutboard.pieces[col][row]
                 piece.set_from_pixbuf(pb, pb_wf, mask)
                 piece.show()
@@ -585,7 +586,7 @@ class JigsawPuzzleWidget (Gtk.EventBox):
         'solved' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
         'cutter-changed' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (str, int)),
         }
-    def __init__ (self):
+    def __init__ (self, x, y):
         super(JigsawPuzzleWidget, self).__init__()
         self._container = Gtk.Fixed()
         self.add(self._container)
@@ -596,6 +597,8 @@ class JigsawPuzzleWidget (Gtk.EventBox):
         self._container.show_all()
         self.running = False
         self.forced_location = False
+        self.x = x
+        self.y = y
 
     def bring_to_top (self, piece):
         wx = self._container.child_get_property(piece, 'x', None)
