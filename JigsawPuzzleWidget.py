@@ -143,7 +143,7 @@ class JigsawPiece (Gtk.EventBox):
     def _expose_cb (self, *args):
         if self.shape is not None:
             # Won't work as cairo.Region is not available in Python 2
-            # self.get_window().ensure_native()
+            self.get_window().ensure_native()
             # logging.error(self.get_window().is_shaped())
             # try:
             #     mregion = Gdk.cairo_region_create_from_surface(self.shape)
