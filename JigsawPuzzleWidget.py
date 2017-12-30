@@ -148,7 +148,7 @@ class JigsawPiece (Gtk.EventBox):
             logging.error("Y " + str(self.y))
             logging.error("H" + str(self.shape.get_height()))
             logging.error("W " + str(self.shape.get_width()))
-            # self.get_window().scroll(self.x, self.y)
+            self.get_window().scroll(self.x, self.y)
             # self.get_window().resize(self.shape.get_height(), self.shape.get_width())
 
 class CutterBasic (object):
