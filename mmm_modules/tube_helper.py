@@ -49,7 +49,7 @@ class TubeHelper (object):
         #self.conn = telepathy.client.Connection(name, path)
         self.game_tube = False
         self.initiating = None
-        
+
 
         # Buddy object for you
         owner = self.pservice.get_owner()
@@ -76,9 +76,11 @@ class TubeHelper (object):
 
 
     def _sharing_setup(self):
-        if self._shared_activity is None:
-            logger.error('Failed to share or join activity')
-            return
+        try:
+            if self._shared_activity is None:
+                logger.error('Failed to share or join activity')
+                return
+        except: logging.error("WHAAT")
 
         self.conn = self._shared_activity.telepathy_conn
         self.tubes_chan = self._shared_activity.telepathy_tubes_chan
@@ -216,7 +218,7 @@ class TubeHelper (object):
                 self.tubes_chan[telepathy.CHANNEL_TYPE_TUBES],
                 id, group_iface=self.text_chan[telepathy.CHANNEL_INTERFACE_GROUP])
 
-            
+
             logger.debug("creating game tube")
             self.game_tube = self.tube_class(self.tube_conn, self.initiating, self)
 
@@ -224,7 +226,7 @@ class TubeHelper (object):
 
     def get_bus_name (self):
         return self.tube_conn.participants.get(self.tubes_chan[telepathy.CHANNEL_INTERFACE_GROUP].GetSelfHandle(), None)
-        
+
     def new_tube_cb (self):
         """ override this """
         pass
