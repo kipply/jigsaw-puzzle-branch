@@ -143,6 +143,7 @@ class JigsawPiece (Gtk.EventBox):
             # Won't work as cairo.Region is not available in Python 2
             # mregion = Gdk.cairo_region_create_from_surface(self.shape)
             # self.get_window().shape_combine_region(mregion, 0, 0)
+            self.get_window().ensure_native()
 
 class CutterBasic (object):
     """ Cutters are used to create the connectors between pieces.
