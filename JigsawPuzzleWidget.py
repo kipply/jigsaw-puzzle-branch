@@ -47,7 +47,7 @@ class JigsawPiece (Gtk.EventBox):
                     'moved' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (int, int)),
                     'dropped' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),}
 
-    def __init__ (self):
+    def __init__ (self, x, y):
         super(JigsawPiece, self).__init__()
         self.index = None
         self.press_coords = (0,0)
@@ -59,6 +59,8 @@ class JigsawPiece (Gtk.EventBox):
         self.placed = False
         self._prepare_ui()
         self._prepare_event_callbacks()
+        self.x = x
+        self.y = y
 
     def _prepare_ui (self):
         self._c = Gtk.Fixed()
@@ -73,7 +75,7 @@ class JigsawPiece (Gtk.EventBox):
         self.l_evids.append(self.connect('button-press-event', self._press_cb))
         self.l_evids.append(self.connect('button-release-event', self._release_cb))
         self.l_evids.append(self.connect('motion-notify-event', self._motion_cb))
-        self.connect('draw', self._expose_cb)
+        self.connect('draw', self._draw_cb)
 
     def set_index (self, index):
         self.index = index
@@ -122,7 +124,7 @@ class JigsawPiece (Gtk.EventBox):
 
     def _press_cb (self, w, e, *attrs):
         self.press_coords = e.get_coords()
-        self.root_coords = w.window.get_origin()
+        self.root_coords = w.get_window().get_origin()
         self.emit('picked')
 
     def _motion_cb (self, w, e, *args):
@@ -137,12 +139,13 @@ class JigsawPiece (Gtk.EventBox):
         self.emit('dropped')
         # The actual position in the whole window is w.window.get_origin()
 
-    def _expose_cb (self, *args):
+    def _draw_cb (self, *args):
         if self.shape is not None:
-            logger.error(self.shape)
-            # Won't work as cairo.Region is not available in Python 2
-            mregion = Gdk.cairo_region_create_from_surface(self.shape)
-            self.get_window().shape_combine_region(mregion, 0, 0)
+            # self.get_window().resize(self.get_window().get_height() + self.x, self.get_window().get_width() + self.y)
+            # self.get_window().scroll(self.x, self.y)
+            # self.get_window().resize(self.shape.get_height(), self.shape.get_width())
+            pass
+
 
 class CutterBasic (object):
     """ Cutters are used to create the connectors between pieces.
@@ -528,8 +531,8 @@ class JigsawBoard (BorderFrame):
         for col in range(pcw):
             pos_y = 0
             for row in range(pch):
-                piece = JigsawPiece()
                 pb, pb_wf, mask, px, py, pw, ph = self.cutboard.pieces[col][row]
+                piece = JigsawPiece(pw, ph)
                 piece.set_from_pixbuf(pb, pb_wf, mask)
                 piece.show()
                 piece.set_index(len(self.board_distribution))
