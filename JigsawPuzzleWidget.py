@@ -142,9 +142,9 @@ class JigsawPiece (Gtk.EventBox):
     def _draw_cb (self, *args):
         if self.shape is not None:
             logger.error(self.shape)
-            window_h = self.get_window().get_height()
-            window_w = self.get_window().get_width()
-            self.get_window().resize(window_h + 100, window_w + 100)
+            # window_h = self.get_window().get_height()
+            # window_w = self.get_window().get_width()
+            # self.get_window().resize(window_h + 100, window_w + 100)
             # Won't work as cairo.Region is not available in Python 2
             # mregion = Gdk.cairo_region_create_from_surface(self.shape)
             # self.get_window().shape_combine_region(mregion, 0, 0)
