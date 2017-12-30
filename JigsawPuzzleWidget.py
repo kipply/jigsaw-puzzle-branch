@@ -148,7 +148,7 @@ class JigsawPiece (Gtk.EventBox):
             logging.error("Y " + str(self.y))
             logging.error("H" + str(self.shape.get_height()))
             logging.error("W " + str(self.shape.get_width()))
-            self._c.put(self.image, -100, -100)
+            self._c.put(self.image, -self.x, -self.y)
             self.image.show()
             # self.get_window().move_resize(self.shape.get_height(), self.shape.get_width())
             # self.get_window().move_resize(self.shape.get_height(), self.shape.get_width())
