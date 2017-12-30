@@ -137,18 +137,14 @@ class JigsawPiece (Gtk.EventBox):
         self.emit('dropped')
         # The actual position in the whole window is w.window.get_origin()
 
-    def _expose_cb (self, widget, cr):
+    def _expose_cb (self, *args):
         if self.shape is not None:
             # Won't work as cairo.Region is not available in Python 2
             self.get_window().ensure_native()
             logging.error(self.get_window().is_shaped())
-            try:
-                mregion = Gdk.cairo_region_create_from_surface(self.shape)
-                self.get_window().shape_combine_region(mregion, 0, 0)
-                logging.error(self.get_window().is_shaped())
-            except:
-                self.get_window().resize(100, 100)
-
+            # mregion = Gdk.cairo_region_create_from_surface(self.shape)
+            # self.get_window().shape_combine_region(mregion, 0, 0)
+            logging.error(self.get_window().is_shaped())
 
 class CutterBasic (object):
     """ Cutters are used to create the connectors between pieces.
