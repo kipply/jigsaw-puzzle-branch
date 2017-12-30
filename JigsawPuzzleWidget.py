@@ -47,7 +47,7 @@ class JigsawPiece (Gtk.EventBox):
                     'moved' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (int, int)),
                     'dropped' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),}
 
-    def __init__ (self):
+    def __init__ (self, x, y):
         super(JigsawPiece, self).__init__()
         self.index = None
         self.press_coords = (0,0)
@@ -59,6 +59,8 @@ class JigsawPiece (Gtk.EventBox):
         self.placed = False
         self._prepare_ui()
         self._prepare_event_callbacks()
+        self.x = x
+        self.y = y
 
     def _prepare_ui (self):
         self._c = Gtk.Fixed()
@@ -143,7 +145,7 @@ class JigsawPiece (Gtk.EventBox):
             self.get_window().ensure_native()
 
             logging.error(self.x)
-            logging.error(self.f)
+            logging.error(self.y)
             logging.error(self.shape.get_height())
             logging.error(self.shape.get_width())
             # self.get_window().move_resize(100, 100, 100, 100)
@@ -586,7 +588,7 @@ class JigsawPuzzleWidget (Gtk.EventBox):
         'solved' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
         'cutter-changed' : (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (str, int)),
         }
-    def __init__ (self, x, y):
+    def __init__ (self):
         super(JigsawPuzzleWidget, self).__init__()
         self._container = Gtk.Fixed()
         self.add(self._container)
@@ -597,8 +599,6 @@ class JigsawPuzzleWidget (Gtk.EventBox):
         self._container.show_all()
         self.running = False
         self.forced_location = False
-        self.x = x
-        self.y = y
 
     def bring_to_top (self, piece):
         wx = self._container.child_get_property(piece, 'x', None)
