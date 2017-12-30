@@ -141,7 +141,7 @@ class JigsawPiece (Gtk.EventBox):
         if self.shape is not None:
             # Won't work as cairo.Region is not available in Python 2
             self.get_window().ensure_native()
-            logging.error("nate?" self.get_window().ensure_native())
+            logging.error("nate?"+ self.get_window().ensure_native())
             logging.error(self.get_window().is_shaped())
             # mregion = Gdk.cairo_region_create_from_surface(self.shape)
             # self.get_window().shape_combine_region(mregion, 0, 0)
