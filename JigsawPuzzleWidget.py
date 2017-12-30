@@ -150,7 +150,8 @@ class JigsawPiece (Gtk.EventBox):
             logging.error("W " + str(self.shape.get_width()))
             self.get_window().resize(self.get_window().get_height() + self.x, self.get_window().get_width() + self.y)
             self.get_window().scroll(self.x, self.y)
-            self.get_window().resize(self.shape.get_height(), self.shape.get_width())
+            self.get_window().resize(100, 100)
+            # self.get_window().resize(self.shape.get_height(), self.shape.get_width())
 
 class CutterBasic (object):
     """ Cutters are used to create the connectors between pieces.
