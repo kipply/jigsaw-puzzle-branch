@@ -371,7 +371,7 @@ class CutBoard (object):
         height = int(height)
         # Prepare the piece mask
         mask_surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width+width_offset, height+height_offset)
-        self.get_windov.resize(100, 100)
+        self.get_window().resize(100, 100)
         #gtk.gdk.Pixmap(None, width+width_offset, height+height_offset, 1)
         mask_cr = cairo.Context(mask_surface)
         mask_cr.save()
