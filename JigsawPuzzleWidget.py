@@ -143,8 +143,8 @@ class JigsawPiece (Gtk.EventBox):
             self.get_window().ensure_native()
             logging.error(self.get_window().ensure_native())
             logging.error(self.get_window().is_shaped())
-            mregion = Gdk.cairo_region_create_from_surface(self.shape)
-            self.get_window().shape_combine_region(mregion, 0, 0)
+            # mregion = Gdk.cairo_region_create_from_surface(self.shape)
+            # self.get_window().shape_combine_region(mregion, 0, 0)
             logging.error(self.get_window().is_shaped())
 
 class CutterBasic (object):
