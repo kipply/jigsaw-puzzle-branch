@@ -142,7 +142,7 @@ class JigsawPiece (Gtk.EventBox):
             # Won't work as cairo.Region is not available in Python 2
             self.get_window().ensure_native()
             logging.error(self.get_window().is_shaped())
-            self.get_window().resize(100, 100)
+            self.get_window().resize(self.shape.get_width(), self.shape.get_width())
 
 
 class CutterBasic (object):
