@@ -76,11 +76,9 @@ class TubeHelper (object):
 
 
     def _sharing_setup(self):
-        try:
-            if self._shared_activity is None:
-                logger.error('Failed to share or join activity')
-                return
-        except: logging.error("WHAAT")
+        if self._shared_activity is None:
+            logger.error('Failed to share or join activity')
+            return
 
         self.conn = self._shared_activity.telepathy_conn
         self.tubes_chan = self._shared_activity.telepathy_tubes_chan
