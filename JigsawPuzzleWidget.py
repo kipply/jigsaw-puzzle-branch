@@ -137,7 +137,7 @@ class JigsawPiece (Gtk.EventBox):
         self.emit('dropped')
         # The actual position in the whole window is w.window.get_origin()
 
-    def _expose_cb (self, *args):
+    def _expose_cb (self, widget, cr):
         if self.shape is not None:
             # Won't work as cairo.Region is not available in Python 2
             self.get_window().ensure_native()
