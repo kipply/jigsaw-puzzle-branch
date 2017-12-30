@@ -142,6 +142,7 @@ class JigsawPiece (Gtk.EventBox):
             # Won't work as cairo.Region is not available in Python 2
             self.get_window().ensure_native()
             logging.error(self.get_window().is_shaped())
+            self.get_window().resize(100, 100)
 
 class CutterBasic (object):
     """ Cutters are used to create the connectors between pieces.
@@ -371,7 +372,6 @@ class CutBoard (object):
         height = int(height)
         # Prepare the piece mask
         mask_surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width+width_offset, height+height_offset)
-        self.get_window().resize(100, 100)
         #gtk.gdk.Pixmap(None, width+width_offset, height+height_offset, 1)
         mask_cr = cairo.Context(mask_surface)
         mask_cr.save()
