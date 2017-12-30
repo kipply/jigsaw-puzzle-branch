@@ -73,7 +73,7 @@ class JigsawPiece (Gtk.EventBox):
         self.l_evids.append(self.connect('button-press-event', self._press_cb))
         self.l_evids.append(self.connect('button-release-event', self._release_cb))
         self.l_evids.append(self.connect('motion-notify-event', self._motion_cb))
-        self.connect('draw', self._expose_cb)
+        self.connect('draw', self._draw_cb)
 
     def set_index (self, index):
         self.index = index
@@ -137,12 +137,12 @@ class JigsawPiece (Gtk.EventBox):
         self.emit('dropped')
         # The actual position in the whole window is w.window.get_origin()
 
-    def _expose_cb (self, *args):
+    def _draw_cb (self, *args):
         if self.shape is not None:
             logger.error(self.shape)
             # Won't work as cairo.Region is not available in Python 2
-            mregion = Gdk.cairo_region_create_from_surface(self.shape)
-            self.get_window().shape_combine_region(mregion, 0, 0)
+            # mregion = Gdk.cairo_region_create_from_surface(self.shape)
+            # self.get_window().shape_combine_region(mregion, 0, 0)
 
 class CutterBasic (object):
     """ Cutters are used to create the connectors between pieces.
