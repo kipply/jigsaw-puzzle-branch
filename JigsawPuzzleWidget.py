@@ -534,9 +534,8 @@ class JigsawBoard (BorderFrame):
         for col in range(pcw):
             pos_y = 0
             for row in range(pch):
-                logging.error(self.cutboard.pieces[col][row][6])
-                piece = JigsawPiece(200, 200)
                 pb, pb_wf, mask, px, py, pw, ph = self.cutboard.pieces[col][row]
+                piece = JigsawPiece(pw, ph)
                 piece.set_from_pixbuf(pb, pb_wf, mask)
                 piece.show()
                 piece.set_index(len(self.board_distribution))
