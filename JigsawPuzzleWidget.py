@@ -141,7 +141,10 @@ class JigsawPiece (Gtk.EventBox):
         if self.shape is not None:
             # Won't work as cairo.Region is not available in Python 2
             self.get_window().ensure_native()
-            logging.error(self.get_window().is_shaped())
+
+            logging.error(self.shape.get_device_offset())
+            logging.error(self.shape.get_height())
+            logging.error(self.shape.get_width())
             # self.get_window().move_resize(100, 100, 100, 100)
 
 class CutterBasic (object):
